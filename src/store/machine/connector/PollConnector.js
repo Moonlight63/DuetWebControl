@@ -266,6 +266,8 @@ export default class PollConnector extends BaseConnector {
 		const response = await this.request('GET', 'rr_status', { type: statusType });
 		const isPrinting = ['D', 'S', 'R', 'P', 'M'].indexOf(response.status) !== -1;
 		const newData = {};
+		//console.log(statusType);
+		//console.log(response);
 
 		// Check if an extended status response needs to be polled in case machine parameters have changed
 		if (!requestExtendedStatus && arraySizesDiffer(response, this.lastStatusResponse)) {
@@ -672,6 +674,9 @@ export default class PollConnector extends BaseConnector {
 
 		// Schedule the next status update
 		this.scheduleUpdate();
+
+		//console.log(newData);
+		
 	}
 
 	convertHeaterState(state) {
@@ -744,6 +749,9 @@ export default class PollConnector extends BaseConnector {
 			}
 		};
 
+		//console.log("CONFIG:");
+		//console.log(configData);
+		
 		await this.dispatch('update', configData);
 	}
 
@@ -1066,7 +1074,7 @@ export default class PollConnector extends BaseConnector {
 			} else if (response.err === 2) {
 				throw new DirectoryNotFoundError(directory);
 			}
-
+			//console.log(response);
 			fileList = fileList.concat(response.files);
 			next = response.next;
 		} while (next !== 0);

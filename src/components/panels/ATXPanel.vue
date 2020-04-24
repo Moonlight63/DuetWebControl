@@ -9,7 +9,7 @@
 </style>
 
 <template>
-	<v-card>
+	<v-card height="100%">
 		<v-card-title>
 			<v-icon small class="mr-1">mdi-power</v-icon> {{ $t('panel.atx.caption') }}
 		</v-card-title>

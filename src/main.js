@@ -11,6 +11,14 @@ import i18n from './i18n'
 import router from './routes'
 import store from './store'
 
+import Default from './layouts/Default.vue'
+import Touch from './layouts/Touch.vue'
+
+
+Vue.component('default-layout', Default);
+Vue.component('touch-layout', Touch);
+
+
 Vue.config.productionTip = false
 
 Vue.use(plugins)

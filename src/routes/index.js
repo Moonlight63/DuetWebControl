@@ -51,6 +51,7 @@ export const Routing = [
 				icon: 'mdi-information',
 				caption: 'menu.job.status',
 				path: '/Job/Status',
+				meta: {layout: 'touch'},
 				component: Job.Status
 			},
 			// Webcam
