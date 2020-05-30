@@ -1,127 +1,219 @@
+<style lang="scss" scoped>
+.touch-grid {
+  display: grid;
+  width: 100%;
+  height: 100%;
+//   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+//   grid-template-columns: repeat(auto-fill, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  /* This is better for small screens, once min() is better supported */
+  /* grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); */
+  grid-gap: 1rem;
+  justify-content: center;
+  align-content: center;
+  /* This is the standardized property now, but has slightly less support */
+  /* gap: 1rem */
+}
+
+.grid__item {
+  position: relative;
+  width: 100%;
+  border: 1px solid #ccc;
+  grid-column: span 2;
+  grid-row: span 2;
+  
+  &:before {
+    content: "";
+    height: 0;
+    display: inline-block;
+    padding-top: 100%;
+    width: 1px;
+    position: relative;
+  }
+  .content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: grid;
+    justify-items: start;
+    align-items: end;
+  }
+  .content-lr {
+    place-items: end end;
+    text-align: right;
+  }
+  .content-inside {
+    padding: 2rem;
+  }
+}
+</style>
+
 <template>
-    <v-row>
-        <v-col class="d-flex flex-column" style="position: absolute; top: 0; bottom: 0;">
-            <div class="component d-flex flex-column flex-grow-1" style="min-height: 0">
-                <v-toolbar class="flex-grow-0">
-                    <directory-breadcrumbs v-model="directory"></directory-breadcrumbs>
-
-                    <v-spacer></v-spacer>
-
-                    <v-btn class="hidden-sm-and-down mr-3" :disabled="uiFrozen" @click="showNewFile = true">
-                        <v-icon class="mr-1">mdi-file-plus</v-icon> {{ $t('button.newFile.caption') }}
-                    </v-btn>
-                    <v-btn class="hidden-sm-and-down mr-3" :disabled="uiFrozen" @click="showNewDirectory = true">
-                        <v-icon class="mr-1">mdi-folder-plus</v-icon> {{ $t('button.newDirectory.caption') }}
-                    </v-btn>
-                    <v-btn class="hidden-sm-and-down mr-3" color="info" :loading="loading" :disabled="uiFrozen" @click="refresh">
-                        <v-icon class="mr-1">mdi-refresh</v-icon> {{ $t('button.refresh.caption') }}
-                    </v-btn>
-                    <upload-btn class="hidden-sm-and-down" :directory="directory" target="macros" color="primary"></upload-btn>
-                </v-toolbar>
-                
-                <!-- <div class="flex-grow-1" style="overflow: auto;"> -->
-                    <touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" fixed-header="true" ref="filelist" v-model="selection" :directory.sync="directory" :loading.sync="loading" sort-table="macros" @fileClicked="fileClicked" no-files-text="list.macro.noMacros">
-                        <template #context-menu>
-                            <v-list-item v-show="isFile" @click="runFile(selection[0].name)">
-                                <v-icon class="mr-1">mdi-play</v-icon> {{ $t('list.macro.run') }}
-                            </v-list-item>
-                        </template>
-                    </touch-base-file-list>
-                <!-- </div> -->
-
-                <v-speed-dial v-model="fab" bottom right fixed direction="top" transition="scale-transition" class="hidden-md-and-up">
-                    <template #activator>
-                        <v-btn v-model="fab" dark color="primary" fab>
-                            <v-icon v-if="fab">mdi-close</v-icon>
-                            <v-icon v-else>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                    </template>
-
-                    <v-btn fab :disabled="uiFrozen" @click="showNewFile = true">
-                        <v-icon class="mr-1">mdi-file-plus</v-icon>
-                    </v-btn>
-
-                    <v-btn fab :disabled="uiFrozen" @click="showNewDirectory = true">
-                        <v-icon>mdi-folder-plus</v-icon>
-                    </v-btn>
-
-                    <v-btn fab color="info" :loading="loading" :disabled="uiFrozen" @click="refresh">
-                        <v-icon>mdi-refresh</v-icon>
-                    </v-btn>
-
-                    <upload-btn fab dark :directory="directory" target="macros" color="primary">
-                        <v-icon>mdi-cloud-upload</v-icon>
-                    </upload-btn>
-                </v-speed-dial> 
-
-                <new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></new-directory-dialog>
-                <new-file-dialog :shown.sync="showNewFile" :directory="directory"></new-file-dialog>
-                <confirm-dialog :shown.sync="runMacroDialog.shown" :title="runMacroDialog.title" :prompt="runMacroDialog.prompt" @confirmed="runFile(runMacroDialog.filename)"></confirm-dialog>
-
-            </div>
-        </v-col>
-    </v-row>
+	<v-row>
+		<v-col class="d-flex flex-column" style="position: absolute; top: 0; bottom: 0;">
+			<div class="component d-flex flex-column flex-grow-1" style="min-height: 0">
+                <div class="touch-grid">
+                    <grid-panel rows=2 columns=2>
+                        <h2>2:1</h2>
+                        <p>Centered</p>
+                    </grid-panel>
+                    <grid-button to='/touch' label="Back" icon="mdi-arrow-left" rows='1'></grid-button>
+                    <div class="grid__item" style="grid-column: span 4; grid-row: span 3">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid__item">
+                        <div class="content">
+                            <div class="content-inside">
+                                <h2>2:1</h2>
+                                <p>Centered</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <!-- <v-responsive ref="elm" aspect-ratio="1" height="100%"> -->
+                <!-- <v-container fluid style="overflow: auto"> -->
+                        <!-- <v-row justify="center">
+                            <touch-nav-btn to="/touch/control" label="Control" icon="mdi-printer-3d-nozzle-outline" color="success"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/console" :label="$t('menu.control.console')" icon="mdi-code-tags" color="purple"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/status" :label="$t('menu.job.status')" icon="mdi-information" color="warning"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/files" :label="$t('menu.files.caption')" icon="mdi-micro-sd" color="primary"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/settings" :label="$t('menu.settings.caption')" icon="mdi-wrench" color="error"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/settings" :label="$t('menu.settings.caption')" icon="mdi-wrench" color="error"></touch-nav-btn>
+                        </v-row>
+                        <v-row justify="center">
+                            <touch-nav-btn to="/touch/control" label="Control" icon="mdi-printer-3d-nozzle-outline" color="success"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/console" :label="$t('menu.control.console')" icon="mdi-code-tags" color="purple"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/status" :label="$t('menu.job.status')" icon="mdi-information" color="warning"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/files" :label="$t('menu.files.caption')" icon="mdi-micro-sd" color="primary"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/settings" :label="$t('menu.settings.caption')" icon="mdi-wrench" color="error"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/settings" :label="$t('menu.settings.caption')" icon="mdi-wrench" color="error"></touch-nav-btn>
+                        </v-row>
+                        <v-row justify="center">
+                            <touch-nav-btn to="/touch/control" label="Control" icon="mdi-printer-3d-nozzle-outline" color="success"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/console" :label="$t('menu.control.console')" icon="mdi-code-tags" color="purple"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/status" :label="$t('menu.job.status')" icon="mdi-information" color="warning"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/files" :label="$t('menu.files.caption')" icon="mdi-micro-sd" color="primary"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/settings" :label="$t('menu.settings.caption')" icon="mdi-wrench" color="error"></touch-nav-btn>
+                            <touch-nav-btn to="/touch/settings" :label="$t('menu.settings.caption')" icon="mdi-wrench" color="error"></touch-nav-btn>
+                        </v-row> -->
+                <!-- </v-container> -->
+                    <!-- </v-responsive> -->
+			</div>
+		</v-col>
+	</v-row>	
 </template>
 
 <script>
-'use strict'
 
-import { mapGetters, mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
-import Path from '../../utils/path.js'
+import { MachineMode } from '../../store/machine/modelEnums.js'
 
 export default {
 	computed: {
-		...mapGetters(['uiFrozen']),
 		...mapState('machine/model', {
-			macrosDirectory: state => state.directories.macros
+			atxPower: state => state.state.atxPower,
+			machineMode: state => state.state.machineMode
 		}),
-		isFile() { return (this.selection.length === 1) && !this.selection[0].isDirectory; }
-	},
-	data() {
-		return {
-			directory: Path.macros,
-			loading: false,
-			selection: [],
-			runMacroDialog: {
-				title: '',
-				prompt: '',
-				filename: '',
-				shown: false
-			},
-			showNewDirectory: false,
-			showNewFile: false,
-			fab: false
-		}
-	},
-	methods: {
-		...mapActions('machine', ['sendCode']),
-		refresh() {
-			this.$refs.filelist.refresh();
-		},
-		fileClicked(item) {
-			this.runMacroDialog.title = this.$t('dialog.runMacro.title', [item.name]);
-			this.runMacroDialog.prompt = this.$t('dialog.runMacro.prompt', [item.name]);
-			this.runMacroDialog.filename = item.name;
-			this.runMacroDialog.shown = true;
-		},
-		runFile(filename) {
-			this.sendCode(`M98 P"${Path.combine(this.directory, filename)}"`);
-		}
-	},
-	mounted() {
-		this.directory = this.macrosDirectory;
-	},
-	watch: {
-		macrosDirectory(to, from) {
-			if (Path.equals(this.directory, from) || !Path.startsWith(this.directory, to)) {
-				this.directory = to;
-			}
+		isFFForUnset() {
+			return !this.machineMode || (this.machineMode === MachineMode.fff);
 		}
 	}
 }
 </script>
-
-<style>
-
-</style>

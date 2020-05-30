@@ -52,24 +52,46 @@ textarea {
 .v-card__title {
 	font-size: 1rem;
 }
+
+::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  -webkit-appearance: none;
+}
 </style>
 
 <template>
 	<v-app>
-		<v-app-bar ref="appToolbar" app clipped-left>
+
+		<v-app-bar ref="appToolbar" app clipped-left class="flex-grow-0 flex-shrink-1">
+			<v-row class="d-flex">
+				<v-col class="d-flex flex-grow-1 justify-center">
+					<connect-btn v-if="isLocal" class="mr-auto"></connect-btn>
+				</v-col>
+				
+				<v-col class="d-flex flex-grow-1 justify-center align-self-center">
+					<v-toolbar-title>{{ name }}</v-toolbar-title>
+				</v-col>
+				
+				<v-col class="d-flex flex-grow-1 justify-center">
+					<emergency-btn class="ml-auto"></emergency-btn>
+				</v-col>
+			</v-row>
+		</v-app-bar>
+
+		<!-- <v-app-bar ref="appToolbar" app clipped-left>
 			<connect-btn v-if="isLocal"></connect-btn>
 
 			<v-spacer></v-spacer>
 
 			<v-toolbar-title>
-				<!-- TODO: Optional OEM branding -->
 				<a href="javascript:void(0)" id="title">{{ name }}</a>
 			</v-toolbar-title>
 
 			<v-spacer></v-spacer>
 
 			<emergency-btn></emergency-btn>
-		</v-app-bar>
+		</v-app-bar> -->
 
 		<v-content id="content">
 			<v-container fluid class="pt-0">
@@ -122,7 +144,8 @@ export default {
 			drawer: this.$vuetify.breakpoint.lgAndUp,
 			hideGlobalContainer: false,
 			routing: Routing,
-			wasXs: this.$vuetify.breakpoint.xsOnly
+			wasXs: this.$vuetify.breakpoint.xsOnly,
+			showKeyboard: false
 		}
 	},
 	methods: {

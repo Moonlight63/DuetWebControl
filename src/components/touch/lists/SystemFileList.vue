@@ -7,7 +7,14 @@
 <template>
 	<div class="component d-flex flex-column flex-grow-1" style="min-height: 0">
 		<v-toolbar  class="flex-grow-0">
-			<directory-breadcrumbs v-model="directory"></directory-breadcrumbs>
+			<v-btn class="hidden-sm-and-down mr-3" color="primary" :to="{ path: '/touch/files' }" >
+				<v-icon class="mr-1">mdi-arrow-left</v-icon> Go Back
+			</v-btn>
+
+			<v-btn v-if="directory !== initialDirectory" @click="onUpLevelClick" class="hidden-sm-and-down mr-3" :disabled="uiFrozen" color="primary">
+				<v-icon class="mr-1">mdi-folder-upload</v-icon> Go Up
+			</v-btn>
+			<!-- <directory-breadcrumbs v-model="directory"></directory-breadcrumbs> -->
 
 			<v-spacer></v-spacer>
 
@@ -20,10 +27,10 @@
 			<v-btn class="hidden-sm-and-down mr-3" color="info" :loading="loading" :disabled="uiFrozen" @click="refresh">
 				<v-icon class="mr-1">mdi-refresh</v-icon> {{ $t('button.refresh.caption') }}
 			</v-btn>
-			<upload-btn class="hidden-sm-and-down" :directory="directory" target="system" color="primary" @uploadComplete="uploadComplete"></upload-btn>
+			<!-- <upload-btn class="hidden-sm-and-down" :directory="directory" target="system" color="primary" @uploadComplete="uploadComplete"></upload-btn> -->
 		</v-toolbar>
 		
-		<touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" fixed-header="true" ref="filelist" v-model="selection" :directory.sync="directory" :loading.sync="loading" sort-table="sys" @fileClicked="fileClicked" @fileEdited="fileEdited" no-files-text="list.system.noFiles">
+		<touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" ref="filelist" v-model="selection" :directory.sync="directory" :loading.sync="loading" sort-table="sys" @fileClicked="fileClicked" @fileEdited="fileEdited" no-files-text="list.system.noFiles">
 			<template #file.config.json v-if="isRootDirectory">
 				<v-icon class="mr-1">mdi-wrench</v-icon> config.json
 				<v-chip @click.stop="editConfigTemplate" class="pointer-cursor ml-2"><v-icon xs class="mr-1">mdi-open-in-new</v-icon> {{ $t('list.system.configToolNote') }}</v-chip>
@@ -55,8 +62,8 @@
 			</upload-btn>
 		</v-speed-dial>
 
-		<new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></new-directory-dialog>
-		<new-file-dialog :shown.sync="showNewFile" :directory="directory"></new-file-dialog>
+		<touch-new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></touch-new-directory-dialog>
+		<touch-new-file-dialog :shown.sync="showNewFile" :directory="directory"></touch-new-file-dialog>
 		<confirm-dialog :shown.sync="showResetPrompt" :title="$t('dialog.configUpdated.title')" :prompt="$t('dialog.configUpdated.prompt')" @confirmed="resetBoard"></confirm-dialog>
 	</div>
 </template>
@@ -81,6 +88,7 @@ export default {
 	data() {
 		return {
 			directory: Path.system,
+			initialDirectory: Path.system,
 			loading: false,
 			selection: [],
 			showNewDirectory: false,
@@ -96,9 +104,9 @@ export default {
 		},
 		fileClicked(item) {
 			if (item.name.toLowerCase().endsWith('.bin')) {
-				this.$refs.filelist.download(item);
+				// this.$refs.filelist.download(item);
 			} else {
-				this.$refs.filelist.edit(item);
+				// this.$refs.filelist.edit(item);
 			}
 		},
 		fileEdited(filename) {
@@ -138,6 +146,11 @@ export default {
 					break;
 				}
 			}
+		},
+		onUpLevelClick() {
+			let pathItems = this.directory.split('/').filter(item => item !== '');
+			pathItems.pop();
+			this.directory = Path.combine(...pathItems);
 		}
 	},
 	mounted() {

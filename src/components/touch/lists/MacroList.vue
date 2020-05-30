@@ -1,6 +1,9 @@
 <template>
 	<v-card>
 		<v-card-title>
+			<v-btn class="mr-4" color="primary" :to="{ path: '/touch/control' }" >
+				<v-icon class="mr-1">mdi-arrow-left</v-icon> Go Back
+			</v-btn>
 			<v-icon small class="mr-1">mdi-polymer</v-icon> {{ $t('list.macro.caption') }}
 			<v-spacer></v-spacer>
 			<span v-show="isConnected" class="subtitle-2">{{ directory.replace(macrosDirectory, $t('list.macro.root')) }}</span>

@@ -52,7 +52,6 @@ export const Routing = [
 				icon: 'mdi-information',
 				caption: 'menu.job.status',
 				path: '/Job/Status',
-				meta: {layout: 'touch'},
 				component: Job.Status
 			},
 			// Webcam
@@ -146,7 +145,7 @@ export const Routing = [
 	// Touch
 	{
 		icon: 'mdi-cellphone',
-		caption: 'Touch Controls',
+		caption: 'Pi Controls',
 		pages: [
 			// Main Dash
 			{
@@ -155,6 +154,55 @@ export const Routing = [
 				path: '/touch',
 				meta: {layout: 'touch'},
 				component: Touch.Dashboard
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Control',
+				path: '/touch/control',
+				meta: {layout: 'touch'},
+				component: Touch.Control
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Move',
+				path: '/touch/control/move',
+				meta: {layout: 'touch'},
+				component: Touch.Move
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Tools',
+				path: '/touch/control/tools',
+				meta: {layout: 'touch'},
+				component: Touch.Tools
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Macros',
+				path: '/touch/control/macros',
+				meta: {layout: 'touch'},
+				component: Touch.Macros
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Temp',
+				path: '/touch/control/temp',
+				meta: {layout: 'touch'},
+				component: Touch.Temp
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Console',
+				path: '/touch/console',
+				meta: {layout: 'touch'},
+				component: Touch.Console
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Status',
+				path: '/touch/status',
+				meta: {layout: 'touch'},
+				component: Touch.Status
 			},
 			// Edit Files Selection
 			{
@@ -183,7 +231,7 @@ export const Routing = [
 				caption: 'Touch Macro Files',
 				path: '/touch/files/macros',
 				meta: {layout: 'touch'},
-				component: Touch.Macros
+				component: Touch.MacroFiles
 			},
 			{
 				icon: 'mdi-cellphone',
@@ -191,6 +239,27 @@ export const Routing = [
 				path: '/touch/files/system',
 				meta: {layout: 'touch'},
 				component: Touch.SystemFiles
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Settings',
+				path: '/touch/settings',
+				meta: {layout: 'touch'},
+				component: Touch.Settings
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch General Settings',
+				path: '/touch/settings/general',
+				meta: {layout: 'touch'},
+				component: Touch.General
+			},
+			{
+				icon: 'mdi-cellphone',
+				caption: 'Touch Machine Settings',
+				path: '/touch/settings/machine',
+				meta: {layout: 'touch'},
+				component: Touch.Machine
 			},
 			{
 				icon: 'mdi-cellphone',

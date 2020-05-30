@@ -1,7 +1,13 @@
 <template>
 	<div class="component d-flex flex-column flex-grow-1" style="min-height: 0">
 		<v-toolbar class="flex-grow-0">
-			<directory-breadcrumbs v-model="directory"></directory-breadcrumbs>
+			<v-btn class="hidden-sm-and-down mr-3" color="primary" :to="{ path: '/touch/files' }" >
+				<v-icon class="mr-1">mdi-arrow-left</v-icon> Go Back
+			</v-btn>
+
+			<v-btn v-if="directory !== initialDirectory" @click="onUpLevelClick" class="hidden-sm-and-down mr-3" :disabled="uiFrozen" color="primary">
+				<v-icon class="mr-1">mdi-folder-upload</v-icon> Go Up
+			</v-btn>
 
 			<v-spacer></v-spacer>
 
@@ -14,10 +20,10 @@
 			<v-btn class="hidden-sm-and-down mr-3" color="info" :loading="loading" :disabled="uiFrozen" @click="refresh">
 				<v-icon class="mr-1">mdi-refresh</v-icon> {{ $t('button.refresh.caption') }}
 			</v-btn>
-			<upload-btn class="hidden-sm-and-down" :directory="directory" target="macros" color="primary"></upload-btn>
+			<!-- <upload-btn class="hidden-sm-and-down" :directory="directory" target="macros" color="primary"></upload-btn> -->
 		</v-toolbar>
 		
-		<touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" fixed-header="true" ref="filelist" v-model="selection" :directory.sync="directory" :loading.sync="loading" sort-table="macros" @fileClicked="fileClicked" no-files-text="list.macro.noMacros">
+		<touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" ref="filelist" v-model="selection" :directory.sync="directory" :loading.sync="loading" sort-table="macros" @fileClicked="fileClicked" no-files-text="list.macro.noMacros">
 			<template #context-menu>
 				<v-list-item v-show="isFile" @click="runFile(selection[0].name)">
 					<v-icon class="mr-1">mdi-play</v-icon> {{ $t('list.macro.run') }}
@@ -50,8 +56,8 @@
 			</upload-btn>
 		</v-speed-dial>
 
-		<new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></new-directory-dialog>
-		<new-file-dialog :shown.sync="showNewFile" :directory="directory"></new-file-dialog>
+		<touch-new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></touch-new-directory-dialog>
+		<touch-new-file-dialog :shown.sync="showNewFile" :directory="directory"></touch-new-file-dialog>
 		<confirm-dialog :shown.sync="runMacroDialog.shown" :title="runMacroDialog.title" :prompt="runMacroDialog.prompt" @confirmed="runFile(runMacroDialog.filename)"></confirm-dialog>
 	</div>
 </template>
@@ -74,6 +80,7 @@ export default {
 	data() {
 		return {
 			directory: Path.macros,
+			initialDirectory: Path.macros,
 			loading: false,
 			selection: [],
 			runMacroDialog: {
@@ -93,14 +100,20 @@ export default {
 			this.$refs.filelist.refresh();
 		},
 		fileClicked(item) {
-			this.runMacroDialog.title = this.$t('dialog.runMacro.title', [item.name]);
-			this.runMacroDialog.prompt = this.$t('dialog.runMacro.prompt', [item.name]);
+			// this.runMacroDialog.title = this.$t('dialog.runMacro.title', [item.name]);
+			// this.runMacroDialog.prompt = this.$t('dialog.runMacro.prompt', [item.name]);
 			this.runMacroDialog.filename = item.name;
-			this.runMacroDialog.shown = true;
+			// this.runMacroDialog.shown = true;
 		},
 		runFile(filename) {
 			this.sendCode(`M98 P"${Path.combine(this.directory, filename)}"`);
-		}
+			this.$refs.filelist.setContextMenu(false);
+		},
+		onUpLevelClick() {
+			let pathItems = this.directory.split('/').filter(item => item !== '');
+			pathItems.pop();
+			this.directory = Path.combine(...pathItems);
+		},
 	},
 	mounted() {
 		this.directory = this.macrosDirectory;
@@ -108,6 +121,7 @@ export default {
 	watch: {
 		macrosDirectory(to, from) {
 			if (Path.equals(this.directory, from) || !Path.startsWith(this.directory, to)) {
+				console.log("Moving to directory");				
 				this.directory = to;
 			}
 		}

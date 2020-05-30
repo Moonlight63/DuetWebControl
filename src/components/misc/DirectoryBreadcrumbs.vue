@@ -83,6 +83,8 @@ export default {
 	methods: {
 		...mapActions('machine', ['move']),
 		changeDirectory(directory) {
+			console.log("emiting event input");
+			console.log(directory);
 			this.$emit('input', directory);
 		},
 		dragOver(directory, e) {

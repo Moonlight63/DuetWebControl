@@ -21,7 +21,7 @@ td {
 	<div style="height: 100%">
 		<v-data-table v-model="innerValue" v-bind="$props"
 			:items="innerFilelist" item-key="name" :headers="headers || defaultHeaders" show-select 
-			:loading="loading || innerLoading"
+			:loading="loading || innerLoading" fixed-header
 			:custom-sort="sort" :sort-by.sync="internalSortBy" :sort-desc.sync="internalSortDesc" must-sort
 			disable-pagination hide-default-footer :mobile-breakpoint="0" style="height: 100%"
 			class="base-file-list elevation-3" :class="{ 'empty-table-fix' : !innerFilelist.length, 'loading-cursor' : isLoading }">
@@ -41,8 +41,8 @@ td {
 			</template>
 
 			<template #item="props">
-				<tr v-ripple :active="props.isSelected" @keydown.space.prevent="props.select(!props.isSelected)"
-					@touchstart="onItemTouchStart(props, $event)" @touchend="onItemTouchEnd"
+				<tr :active="props.isSelected" @keydown.space.prevent="props.select(!props.isSelected)"
+					@touchstart="onItemTouchStart(props, $event)" @touchend="onItemTouchEnd" @touchmove="onItemTouchEnd"
 					@click="onItemClick(props)" @keydown.enter.prevent="onItemClick(props)"
 					@contextmenu.prevent="onItemContextmenu(props, $event)" @keydown.escape.prevent="contextMenu.shown = false"
 					@dragstart="onItemDragStart(props.item, $event)" @dragover="onItemDragOver(props.item, $event)" @drop.prevent="onItemDragDrop(props.item, $event)"
@@ -87,13 +87,13 @@ td {
 			</template>
 		</v-data-table>
 
-		<v-menu v-model="contextMenu.shown" :position-x="contextMenu.x" :position-y="contextMenu.y" absolute offset-y>
+		<v-dialog v-model="contextMenu.shown" max-width="290">
 			<v-list>
 				<slot name="context-menu"></slot>
 
-				<v-list-item v-show="!noDownload && innerValue.length === 1 && filesSelected" @click="download">
+				<!-- <v-list-item v-show="!noDownload && innerValue.length === 1 && filesSelected" @click="download">
 					<v-icon class="mr-1">mdi-cloud-download</v-icon> {{ $tc('list.baseFileList.download', innerValue.length) }}
-				</v-list-item>
+				</v-list-item> -->
 				<v-list-item v-show="!noEdit && innerValue.length === 1 && filesSelected" :disabled="!canEditFile" @click="edit(innerValue[0])">
 					<v-icon class="mr-1">mdi-file-document-edit</v-icon> {{ $t('list.baseFileList.edit') }}
 				</v-list-item>
@@ -107,10 +107,10 @@ td {
 					<v-icon class="mr-1">mdi-package-down</v-icon> {{ $t('list.baseFileList.downloadZIP') }}
 				</v-list-item>
 			</v-list>
-		</v-menu>
+		</v-dialog>
 
-		<file-edit-dialog :shown.sync="editDialog.shown" :filename="editDialog.filename" v-model="editDialog.content" @editComplete="$emit('fileEdited', $event)"></file-edit-dialog>
-		<input-dialog :shown.sync="renameDialog.shown" :title="$t('dialog.renameFile.title')" :prompt="$t('dialog.renameFile.prompt')" :preset="renameDialog.item && renameDialog.item.name" @confirmed="renameCallback"></input-dialog>
+		<touch-file-edit-dialog :shown.sync="editDialog.shown" :filename="editDialog.filename" v-model="editDialog.content" @editComplete="$emit('fileEdited', $event)"></touch-file-edit-dialog>
+		<touch-input-dialog :shown.sync="renameDialog.shown" :title="$t('dialog.renameFile.title')" :prompt="$t('dialog.renameFile.prompt')" :preset="renameDialog.item && renameDialog.item.name" @confirmed="renameCallback"></touch-input-dialog>
 	</div>
 </template>
 
@@ -292,6 +292,7 @@ export default {
 
 			// Then make sure directories come first
 			items.sort((a, b) => (a.isDirectory === b.isDirectory) ? 0 : (a.isDirectory ? -1 : 1));
+
 			return items;
 		},
 		async refresh() {
@@ -401,6 +402,9 @@ export default {
 			} else {
 				this.$emit('fileClicked', props.item);
 			}
+		},
+		setContextMenu(to) {
+			this.contextMenu.shown = to;
 		},
 		onItemContextmenu(props, e) {
 			if (this.contextMenu.shown) {
@@ -520,6 +524,7 @@ export default {
 			try {
 				const filename = (item && item.name) ? item.name : this.innerValue[0].name;
 				const blob = await this.machineDownload({ filename: Path.combine(this.innerDirectory, filename), type: 'blob' });
+				this.contextMenu.shown = false;
 				saveAs(blob, filename);
 			} catch (e) {
 				if (!(e instanceof DisconnectedError) && !(e instanceof OperationCancelledError)) {
@@ -535,6 +540,7 @@ export default {
 				this.editDialog.filename = filename;
 				this.editDialog.content = response;
 				this.editDialog.shown = true;
+				this.contextMenu.shown = false;
 			} catch (e) {
 				if (!(e instanceof DisconnectedError) && !(e instanceof OperationCancelledError)) {
 					// should be handled before we get here
@@ -546,6 +552,7 @@ export default {
 			this.renameDialog.directory = this.innerDirectory;
 			this.renameDialog.item = (item && item.name) ? item : this.innerValue[0];
 			this.renameDialog.shown = true;
+			this.contextMenu.shown = false;
 		},
 		async renameCallback(newFilename) {
 			const oldFilename = this.renameDialog.item.name;
@@ -603,6 +610,7 @@ export default {
 				this.$log('success', (deletedItems.length > 1) ? this.$t('notification.delete.successMultiple', [deletedItems.length]) : this.$t('notification.delete.success', [deletedItems[0].name]));
 			}
 			this.innerDoingFileOperation = false;
+			this.contextMenu.shown = false;
 		},
 		async downloadZIP(items) {
 			if (!items || !(items instanceof Array)) { items = this.innerValue.slice(); }
@@ -633,6 +641,7 @@ export default {
 				this.$makeNotification('error', this.$t('notification.compress.errorTitle'), e.message);
 			}
 			notification.hide();
+			this.contextMenu.shown = false;
 		}
 	},
 	mounted() {

@@ -49,12 +49,6 @@
 						autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 						:value="innerValue" @input.passive="valueChanged = true" @blur="innerValue = $event.target.value"
 						@keydown.tab.exact.prevent="onTextareaTab" @keydown.esc.prevent.stop="close(false)"></v-textarea>
-
-			<v-container class="py-0">
-				<v-spacer></v-spacer>
-				<touch-keyboard justify="center" align="center" @onChange="onKeyboardChange" @onKeyPress="onKeyPress" :input="innerValue" :theme="keyboardTheme" />			
-				<v-spacer></v-spacer>
-			</v-container>
 		</v-card>
 	</v-dialog>
 </template>
@@ -97,8 +91,7 @@ export default {
 	data() {
 		return {
 			innerValue: '',
-			valueChanged: false,
-			keyboardTheme: "hg-theme-default myTheme1"
+			valueChanged: false
 		}
 	},
 	methods: {
@@ -136,13 +129,6 @@ export default {
 			this.innerValue = `${textStart}\t${textEnd}`;
 			e.target.value = this.innerValue;
 			e.target.selectionEnd = e.target.selectionStart = originalSelectionStart + 1;
-		},
-		onKeyboardChange(input) {
-			this.innerValue = input;
-			this.valueChanged = true;
-		},
-		onKeyPress(button) {
-			console.log("button", button);
 		}
 	},
 	watch: {

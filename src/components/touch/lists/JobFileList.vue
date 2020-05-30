@@ -1,21 +1,28 @@
 <template>
 	<div class="component d-flex flex-column flex-grow-1" style="min-height: 0">
 		<v-toolbar class="flex-grow-0">
-			<sd-card-btn v-if="volumes.length > 1" v-model="volume" class="hidden-sm-and-down"></sd-card-btn>
-			<directory-breadcrumbs v-model="directory"></directory-breadcrumbs>
+			<v-btn class="hidden-sm-and-down mr-3" color="primary" :to="{ path: '/touch/files' }" >
+				<v-icon class="mr-1">mdi-arrow-left</v-icon> Go Back
+			</v-btn>
+
+			<v-btn v-if="directory !== initialDirectory" @click="onUpLevelClick" class="hidden-sm-and-down mr-3" :disabled="uiFrozen" color="primary">
+				<v-icon class="mr-1">mdi-folder-upload</v-icon> Go Up
+			</v-btn>
+			<!-- <directory-breadcrumbs v-model="directory"></directory-breadcrumbs> -->
 
 			<v-spacer></v-spacer>
 
+			<sd-card-btn v-if="volumes.length > 1" v-model="volume" class="hidden-sm-and-down"></sd-card-btn>
 			<v-btn class="hidden-sm-and-down mr-3" :disabled="uiFrozen" @click="showNewDirectory = true">
 				<v-icon class="mr-1">mdi-folder-plus</v-icon> {{ $t('button.newDirectory.caption') }}
 			</v-btn>
 			<v-btn class="hidden-sm-and-down mr-3" color="info" :loading="loading || fileinfoProgress !== -1" :disabled="uiFrozen" @click="refresh">
 				<v-icon class="mr-1">mdi-refresh</v-icon> {{ $t('button.refresh.caption') }}
 			</v-btn>
-			<upload-btn class="hidden-sm-and-down" :directory="directory" target="gcodes" color="primary"></upload-btn>
+			<!-- <upload-btn class="hidden-sm-and-down" :directory="directory" target="gcodes" color="primary"></upload-btn> -->
 		</v-toolbar>
 		
-		<touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" fixed-header="true" ref="filelist" v-model="selection" :headers="headers" :directory.sync="directory" :filelist.sync="filelist" :loading.sync="loading" sort-table="jobs" @directoryLoaded="directoryLoaded" @fileClicked="fileClicked" no-files-text="list.jobs.noJobs">
+		<touch-base-file-list class="flex-grow-1" style="overflow: auto;" height="100%" ref="filelist" v-model="selection" :headers="headers" :directory.sync="directory" :filelist.sync="filelist" :loading.sync="loading" sort-table="jobs" @directoryLoaded="directoryLoaded" @fileClicked="fileClicked" no-files-text="list.jobs.noJobs">
 			<v-progress-linear slot="progress" :indeterminate="fileinfoProgress === -1" :value="(fileinfoProgress / filelist.length) * 100"></v-progress-linear>
 
 			<template #context-menu>
@@ -49,8 +56,8 @@
 			</upload-btn>
 		</v-speed-dial>
 
-		<new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></new-directory-dialog>
-		<confirm-dialog :shown.sync="startJobDialog.shown" :title="startJobDialog.title" :prompt="startJobDialog.prompt" @confirmed="start(startJobDialog.item)"></confirm-dialog>
+		<touch-new-directory-dialog :shown.sync="showNewDirectory" :directory="directory"></touch-new-directory-dialog>
+		<touch-confirm-dialog :shown.sync="startJobDialog.shown" :title="startJobDialog.title" :prompt="startJobDialog.prompt" @confirmed="start(startJobDialog.item)"></touch-confirm-dialog>
 	</div>
 </template>
 
@@ -142,6 +149,7 @@ export default {
 	data() {
 		return {
 			directory: Path.gCodes,
+			initialDirectory: Path.gCodes,
 			selection: [],
 			filelist: [],
 			loadingValue: false,
@@ -248,10 +256,10 @@ export default {
 		},
 		fileClicked(item) {
 			if (!this.isPrinting) {
-				this.startJobDialog.title = this.$t('dialog.startJob.title', [item.name]);
-				this.startJobDialog.prompt = this.$t('dialog.startJob.prompt', [item.name]);
+				//this.startJobDialog.title = this.$t('dialog.startJob.title', [item.name]);
+				//this.startJobDialog.prompt = this.$t('dialog.startJob.prompt', [item.name]);
 				this.startJobDialog.item = item;
-				this.startJobDialog.shown = true;
+				//this.startJobDialog.shown = true;
 			}
 		},
 		start(item) {
@@ -259,6 +267,11 @@ export default {
 		},
 		simulate(item) {
 			this.sendCode(`M37 P"${Path.combine(this.directory, (item && item.name) ? item.name : this.selection[0].name)}"`);
+		},
+		onUpLevelClick() {
+			let pathItems = this.directory.split('/').filter(item => item !== '');
+			pathItems.pop();
+			this.directory = Path.combine(...pathItems);
 		}
 	},
 	mounted() {
