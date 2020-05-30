@@ -1,0 +1,33 @@
+<template>
+    <v-col cols="6" sm="3" md="2" xl="1">
+        <v-responsive aspect-ratio="1">
+            <v-btn class="ma-0" width="100%" height="100%" :to="to">
+                <div class="d-flex flex-column text-center justify-center fill-height">
+                    <v-icon size="56px" class="mb-3" :color="color">{{ icon }}</v-icon>
+                    <div>{{ label }}</div>
+                </div>
+            </v-btn>
+        </v-responsive>
+    </v-col>
+</template>
+
+<script>
+export default {
+    props: {
+        label: {
+            type: String,
+            required: true
+        },
+        icon: {
+            type: String,
+            required: true
+        },
+        color: String,
+        to: [String, Object]
+    }
+}
+</script>
+
+<style>
+
+</style>
