@@ -56,7 +56,7 @@ export const Routing = [
 			},
 			// Webcam
 			{
-				icon: 'mdi-photo-camera',
+				icon: 'mdi-webcam',
 				caption: 'menu.job.webcam',
 				path: '/Job/Webcam',
 				component: Job.Webcam,
