@@ -1,0 +1,64 @@
+<template>
+  <grid-panel v-bind="$attrs" class="d-flex flex-column pa-2">
+      <v-btn @click="prev" class="align-stretch flex-column">
+          <autosize-text icon="mdi-chevron-up" class="fill-height flex-grow-1" />
+      </v-btn>
+      <div class="flex-grow-1" style="margin-top: 1rem; margin-bottom: 1rem; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(3, minmax(1fr, 1fr)); grid-gap: 1rem;">
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+          <grid-panel rows="1" columns="1" >
+              Test Content
+          </grid-panel>
+      </div>
+      <v-btn @click="next" class="align-stretch flex-column">
+          <autosize-text icon="mdi-chevron-down" class="fill-height flex-grow-1" />
+      </v-btn>
+  </grid-panel>
+</template>
+
+<script>
+export default {
+    methods: {
+        prev() {
+
+        },
+        next() {
+
+        },
+    }
+}
+</script>
+
+<style scoped>
+.v-btn {
+    white-space: normal;
+}
+.v-btn >>> .v-btn__content {
+    flex: auto;
+}
+.v-btn:hover:before {
+    background-color: transparent !important
+}
+</style>
