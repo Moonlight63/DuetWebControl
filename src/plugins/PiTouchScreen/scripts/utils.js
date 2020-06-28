@@ -7,6 +7,7 @@ import {
 	state
 } from './scene';
 import GCodeParser from './gcode-parser';
+// import { Vector3, Box3Helper, SphereBufferGeometry, WireframeGeometry, LineSegments } from 'three';
 
 /**
  * Update various scene properties
@@ -69,19 +70,55 @@ const update = {
 				state.object = object;
 
 				state.object.extrusion.geometry.computeBoundingSphere();
-				state.object.extrusion.geometry.computeBoundingBox();
+				// state.object.extrusion.geometry.computeBoundingBox();
 
 				let boundingSphere = state.object.extrusion.geometry.boundingSphere;
+				// let boundingBox = state.object.extrusion.geometry.boundingBox;
 				// let center = boundingSphere.center;
-
 				// state.object.extrusion.geometry.translate(-center.x, -center.y, -center.z);
 
+				// var helper = new Box3Helper( boundingBox, 0xffff00 );
+				// state.scene.add( helper );
+				// let sphereHelperGeo = new SphereBufferGeometry(boundingSphere.radius, 32, 32);
+				// let sphereWire = new WireframeGeometry(sphereHelperGeo);
+				// let sphereLines = new LineSegments(sphereWire);
+				// state.scene.add( sphereLines );
+
+				// let placeholderPosition = new Vector3(
+				// 	-boundingSphere.radius,
+				// 	-boundingSphere.radius,
+				// 	boundingBox.getSize().z/2,
+				// );
+
+				// console.log("Placeholder: ");
+				// console.log(placeholderPosition);
+				
+				// console.log("Axis: ");
+				// console.log(axis);
+				
+				
 				const fov = state.camera.fov * (Math.PI / 180);
 				let cameraZ = Math.abs(boundingSphere.radius / 4 * Math.tan(fov * 2));
-
-				console.log(cameraZ);
+				
+				// let axis = new Vector3().copy(placeholderPosition).normalize().multiplyScalar(cameraZ);
+				// console.log(axis);
+				// let newPos = boundingSphere.center.clone().add(axis);
+				// console.log(newPos);
+				
+				
+				// console.log(cameraZ);
 
 				state.camera.position.set(-cameraZ * 1.1, -cameraZ * 1.1, cameraZ / 2);
+				// state.controls.reset();
+				state.controls.target = boundingSphere.center;
+				state.camera.position.add(boundingSphere.center);
+				state.camera.lookAt(boundingSphere.center);
+
+				// state.camera.position.copy(newPos);
+				// state.camera.translateOnAxis(axis, cameraZ);
+				// state.camera.lookAt(boundingSphere.center);
+
+
 			});
 		}
 

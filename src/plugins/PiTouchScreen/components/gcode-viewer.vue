@@ -1,53 +1,43 @@
 <template>
-  <div id="canvas" ref="canvas" />
+  <div ref="canvas" style="width: 100%; height: 100%"/>
 </template>
 
 <script>
-import {setup, teardown} from '../scripts/scene';
-import utils from '../scripts/utils';
+//import {setup, teardown} from '../scripts/scene';
+//import utils from '../scripts/utils';
+
+import GcodePreviewer from '../scripts/GcodePreviewer'
+
 export default {
 
   methods: {
     forceUpdate: function (raw) {
-      utils.update.gcode(raw, this.theme);
+      //utils.update.gcode(raw, this.theme);
+
+      this.previewer.loadGcode(raw);
+    },
+    redraw: function() {
+      this.previewer.redraw();
+    }
+  },
+
+  data() {
+    return {
+      previewer: null,
     }
   },
 
   props: {
     bed: {
       default: () => ({
-        X: 10,
-        Y: 10
+        X: 200,
+        Y: 200
       }),
       type: Object
     },
     gcode: {
       required: false,
       type: String
-    },
-    position: {
-      default: () => ({
-        X: 5,
-        Y: -5,
-        Z: 0
-      }),
-      type: Object
-    },
-    rotation: {
-      default: () => ({
-        X: -90,
-        Y: 0,
-        Z: 180
-      }),
-      type: Object
-    },
-    scale: {
-      default: () => ({
-        X: 0.1,
-        Y: 0.1,
-        Z: 0.1
-      }),
-      type: Object
     },
     theme: {
       default: () => ({
@@ -65,66 +55,44 @@ export default {
       deep: true,
       handler: function ()
       {
-        utils.update.bed(this.bed);
+        // utils.update.bed(this.bed);
       }
     },
-    //Update model
+    // Update model
     gcode: function (raw)    
     {
       console.log('got request for update');
-      
-      utils.update.gcode(raw, this.theme);
-      // utils.update.position(this.position);
-      // utils.update.rotation(this.rotation);
-      // utils.update.scale(this.scale);
-    },
-    //Update position
-    position: {
-      deep: true,
-      handler: function (value)
-      {
-        utils.update.position(value);
-      }
-    },
-    //Update rotation
-    rotation: {
-      deep: true,
-      handler: function (value)
-      {
-        utils.update.rotation(value);
-      }
-    },
-    //Update scale
-    scale: {
-      deep: true,
-      handler: function (value)
-      {
-        utils.update.scale(value);
-      }
+      this.previewer.loadGcode(raw);
     },
     //Update theme
-    theme: {
-      deep: true,
-      handler: function (value)
-      {
-        utils.update.theme(value);
-      }
-    }
+    // theme: {
+    //   deep: true,
+    //   handler: function (value)
+    //   {
+    //     //utils.update.theme(value);
+        
+    //   }
+    // }
   },
   mounted: function ()  
   {
     //Setup scene
-    setup(this.$refs.canvas, this.bed, this.theme, this.gcode, this.position, this.rotation, this.scale);
+    //setup(this.$refs.canvas, this.bed, this.theme, this.gcode, this.position, this.rotation, this.scale);
+
+    this.previewer = new GcodePreviewer(this.$refs.canvas, this.bed, this.theme, this.gcode);
   },
   destroyed: function ()  
   {
     //Teardown scene
-    teardown();
+    //teardown();
+
+    this.previewer.teardown();
+
   }
 };
 </script>
 
-<style>
+<style scoped>
 #canvas {
   position: absolute;
   width: 100%;

@@ -130,9 +130,9 @@ const setup = async (canvas, bed, theme, gcode, position, rotation, scale) => {
 	state.scene.add(light2);
 
 	// Make axis arrows for XYZ
-	state.scene.add(new ArrowHelper(new Vector3(1, 0, 0), new Vector3(0, 0, 0), 0.5, 0xFF0000));
-	state.scene.add(new ArrowHelper(new Vector3(0, 1, 0), new Vector3(0, 0, 0), 0.5, 0x00FF00));
-	state.scene.add(new ArrowHelper(new Vector3(0, 0, 1), new Vector3(0, 0, 0), 0.5, 0x0000FF));
+	state.scene.add(new ArrowHelper(new Vector3(1, 0, 0), new Vector3(0, 0, 0), 5, 0xFF0000));
+	state.scene.add(new ArrowHelper(new Vector3(0, 1, 0), new Vector3(0, 0, 0), 5, 0x00FF00));
+	state.scene.add(new ArrowHelper(new Vector3(0, 0, 1), new Vector3(0, 0, 0), 5, 0x0000FF));
 
 	//GCODE
 	if (gcode != null) {
@@ -182,7 +182,7 @@ const setup = async (canvas, bed, theme, gcode, position, rotation, scale) => {
 	//Start
 	const animate = () => {
 		if (!state.destroyed) {
-			state.controls.update();
+			// state.controls.update();
 			requestAnimationFrame(animate);
 			state.renderer.render(state.scene, state.camera);
 		}

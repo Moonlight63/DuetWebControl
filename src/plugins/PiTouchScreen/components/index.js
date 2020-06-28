@@ -8,6 +8,7 @@ import Vue from 'vue'
 // import Buttons from './buttons'
 // import TouchCodeInput from './input/TouchCodeInput.vue'
 import './grid'
+import './dialogs'
 
 import GcodeViewer from './gcode-viewer.vue'
 Vue.component('gcode-viewer', GcodeViewer);

@@ -8,29 +8,11 @@
  */
 
 import {
-	// LineBasicMaterial,
-	// BufferGeometry,
-	// Float32BufferAttribute,
-	// Line,
-	// CatmullRomCurve3,
-	// TubeBufferGeometry,
-	// Vector3,
 	Mesh,
 	MeshToonMaterial,
-	// BufferGeometryLoader,
-	// ObjectLoader,
-	// LineCurve3,
-	// BufferGeometry
 } from 'three';
 
-
-// import BufferGeometryUtils from './BufferGeometryUtils'
-// import { LinearCurve3 } from './LinearCurve3.js'
-// import { PathBufferGeometry } from './PathBufferGeometry'
 import { PathBufferGeometry } from './PathGeometry'
-// import { CubeTestBufferGeometry } from './CubeTestGeo'
-
-// import * as GcodeParser from './cncjs-gcode-parser'
 
 /**
  * @class GCodeParser GCODE parser
@@ -262,6 +244,7 @@ export default class GCodeParser {
 			// pathBuffer.dispose();
 			// meshGeo.forEach(buf => {buf.dispose();});
 			// combined.dispose();
+			geo.dispose();
 
 			return resolve({
 				// path: pathObject,

@@ -1,13 +1,18 @@
 <template>
-	<grid>
-		<router-view></router-view>
-	</grid>
+	<div style="display: contents">
+		<grid>
+			<router-view></router-view>
+		</grid>
+		<gcode-view></gcode-view>
+	</div>
 </template>
 
 <script>
 'use strict'
 
 import { registerRoute } from '../../routes'
+
+
 
 import './components'
 import Routes from './routes'
@@ -88,6 +93,21 @@ export default {
 		// 	console.log("Base Next!");
 			
 		// });
+
+		this.$watch(function() {return this.$vuetify.theme.dark;}, function() {
+			console.log("Darktheme changed");
+			
+			document.querySelectorAll(`
+			#global-container, #global-container + hr.v-divider, header.v-app-bar,
+			nav.v-navigation-drawer
+			`).forEach(elem => {
+				elem.classList.add('d-none');
+			});
+
+			document.getElementById('content').classList.add('notransition', 'pa-0');
+
+			document.querySelector('#global-container + hr.v-divider + div.container').classList.add('touch-container');
+		});
 	},
 	methods: {
 		goTo(path) {
@@ -96,7 +116,20 @@ export default {
 	},
 
 	watch: {
-        
+        // 'this.$vuetify.theme.dark'() {
+		// 	console.log("Darktheme changed");
+			
+		// 	document.querySelectorAll(`
+		// 	#global-container, #global-container + hr.v-divider, header.v-app-bar,
+		// 	nav.v-navigation-drawer
+		// 	`).forEach(elem => {
+		// 		elem.classList.add('d-none');
+		// 	});
+
+		// 	document.getElementById('content').classList.add('notransition', 'pa-0');
+
+		// 	document.querySelector('#global-container + hr.v-divider + div.container').classList.add('touch-container');
+		// }
     }
 }
 </script>

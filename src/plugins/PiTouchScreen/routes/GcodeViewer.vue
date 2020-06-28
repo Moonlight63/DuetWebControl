@@ -23,7 +23,6 @@
             <gcode-viewer
                 ref="viewerComp"
                 class="emulate-root"
-                style="width: 512px; height: 512px;"
                 :bed="viewer.bed"
                 :gcode="viewer.gcode"
                 :position="viewer.position"
@@ -31,7 +30,7 @@
                 :scale="viewer.scale"
                 :theme="viewer.theme"
             />
-        </grid-panel>
+        </grid-panel> 
 
     </div>
 </template>
@@ -66,21 +65,6 @@ export default {
           Y: 10
         },
         gcode: undefined,
-        position: {
-          X: 5,
-          Y: 0,
-          Z: -5
-        },
-        rotation: {
-          X: -90,
-          Y: 0,
-          Z: 180
-        },
-        scale: {
-          X: 0.1,
-          Y: 0.1,
-          Z: 0.1
-        },
         theme: {
           extrusionColor: '#4287f5',
           pathColor: '#0a2f6b',
