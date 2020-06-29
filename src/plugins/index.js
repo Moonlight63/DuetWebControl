@@ -1,95 +1,93 @@
-// 'use strict'
-
-// import Vue from 'vue'
-
-// export default Vue.observable([
-// 	{
-// 		name: 'Auto Update',
-// 		author: 'Duet3D Ltd',
-// 		loaded: false,
-// 		module: () => import(
-// 			/* webpackChunkName: "AutoUpdate" */
-// 			'./AutoUpdate/AutoUpdate.vue'
-// 		)
-// 	},
-// 	{
-// 		name: 'Height Map',
-// 		author: 'Duet3D Ltd',
-// 		loaded: false,
-// 		module: () => import(
-// 			/* webpackChunkName: "HeightMap" */
-// 			'./HeightMap/HeightMap.vue'
-// 		)
-// 	},
-// 	{
-// 		name: 'G-Code Visualizer',
-// 		author: 'Duet3D Ltd',
-// 		loaded: false,
-// 		module: () => import(
-// 			/* webpackChunkName: "Visualizer" */
-// 			'./Visualizer/Visualizer.vue'
-// 		)
-// 	},
-// 	// Add your own plugins here while developing
-// ])
-
-
 'use strict'
 
 import Vue from 'vue'
 
-let plugins = Vue.observable([
-	{
+import { version } from '../../package.json'
+import { PluginManifest } from './manifest.js'
+
+export class Plugin extends PluginManifest {
+	constructor(initData) {
+		super(initData);
+		if (initData.loadModule) {
+			this.loadModule = initData.loadModule;
+		}
+	}
+
+	loaded = false
+
+	async loadModule() {
+		// Import JS files
+		for (let i = 0; i < this.jsFiles.length; i++) {
+			const module = await import(
+				/* webpackIgnore: true */
+				`./js/${this.jsFiles[i]}`
+			);
+			Vue.use(module.default);
+		}
+
+		// Import CSS files
+		for (let i = 0; i < this.cssFiles.length; i++) {
+			await import(
+				/* webpackIgnore: true */
+				'./css/' + this.cssFiles[i]
+			);
+		}
+	}
+
+	get dependencies() {
+		let result = []
+		if (this.dwcVersion) {
+			result.push(`DWC=${this.dwcVersion}`);
+			result.concat(this.dwcDependencies);
+		}
+		if (this.dsfVersion) {
+			result.push(`DSF=${this.dsfVersion}`);
+			result.concat(this.sbcPluginDependencies);
+			result.concat(this.sbcDependencies);
+		}
+		if (this.rrfVersion) {
+			result.push(`RRF=${this.rrfVersion}`);
+		}
+		return result.join(', ');
+	}
+}
+
+export default Vue.observable([
+	/*new Plugin({
 		name: 'Auto Update',
 		author: 'Duet3D Ltd',
-		loaded: false,
-		module: () => import(
-			/* webpackChunkName: "AutoUpdate" */
+		version,
+		loadModule: () => import(
+			/* webpackChunkName: "AutoUpdate" *//*
 			'./AutoUpdate/AutoUpdate.vue'
 		)
-	},
-	{
+	}),*/
+	new Plugin({
 		name: 'Height Map',
 		author: 'Duet3D Ltd',
-		loaded: false,
-		module: () => import(
+		version,
+		loadModule: () => import(
 			/* webpackChunkName: "HeightMap" */
 			'./HeightMap/HeightMap.vue'
 		)
-	},
-	{
+	}),
+	new Plugin({
 		name: 'G-Code Visualizer',
 		author: 'Duet3D Ltd',
-		loaded: false,
-		module: () => import(
+		version,
+		loadModule: () => import(
 			/* webpackChunkName: "Visualizer" */
 			'./Visualizer/Visualizer.vue'
 		)
-	},
-	// Add your own plugins here while developing
-	{
+	}),
+	// Add your own plugins here during development...
+	new Plugin({
 		name: 'Pi Touchscreen',
 		author: 'Dalen Catt',
-		loaded: true,
-		module: () => import(
-			/* webpackChunkName: "PiTouchScreen" */
+		version,
+		loadModule: () => import(
+			/* webpackChunkName: "Visualizer" */
 			'./PiTouchScreen/Base.vue'
 		)
-	},
+	}),
 ])
-
-plugins.forEach(plugin => {
-	// TODO Load external plugins via import(/* webpackIgnore: true */ 'ignored-module.js');
-	if (plugin.loaded) {
-		plugin.module().then(function(module) {
-			try {
-				Vue.use(module.default);
-				//plugin.loaded = true;
-			} catch (e) {
-				alert(`Failed to load plugin:\n${e}`);
-			}
-		});
-	}
-});
-
-export default plugins
