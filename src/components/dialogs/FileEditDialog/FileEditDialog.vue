@@ -28,34 +28,21 @@
 .edit-textarea > div > div > div {
 	align-items: stretch !important;
 }
-
-.edit-textarea.prism-editor-wrapper,
-.edit-textarea.prism-editor-wrapper pre {
+.edit-textarea textarea {
 	display: flex;
 	flex-grow: 1;
-
-	code[class*="language-"], pre[class*="language-"] {
-		background-color: var(--background);
-		outline: none;
-		box-shadow: none;
-
-		&::before {
-			content: '';
-		}
-
-		&::selection * {
-			background-color: unset;
-			color: unset;
-			text-shadow: unset;
-		}
-	}
+	font-family: monospace;
+	padding-left: 12px !important;
+	margin-top: 0 !important;
+	resize: none;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
 }
-
 </style>
 
 <template>
 	<v-dialog :value="shown" @input="$emit('update:shown', $event)" fullscreen hide-overlay transition="dialog-bottom-transition">
-		<promise-based-confirm-dialog ref="confirm" />
 		<v-card class="d-flex flex-column">
 			<v-app-bar flat dark color="primary" class="flex-grow-0 flex-shrink-1">
 				<v-btn icon dark @click="close(false)">
@@ -71,7 +58,7 @@
 				<v-btn v-if="isMenu" dark text href="https://duet3d.dozuki.com/Wiki/Duet_2_Maestro_12864_display_menu_system" target="_blank">
 					<v-icon class="mr-1">mdi-help</v-icon> {{ $t('dialog.fileEdit.menuReference') }}
 				</v-btn>
-				<v-btn dark text @click="save" :disabled="valueChanged === false">
+				<v-btn dark text @click="save">
 					<v-icon class="mr-1">mdi-floppy</v-icon> {{ $t('dialog.fileEdit.save') }}
 				</v-btn>
 			</v-app-bar>
@@ -119,12 +106,6 @@ export default {
 		},
 		value: String
 	},
-	mounted() {
-		require(this.$vuetify.theme.dark ?
-				'prism-themes/themes/prism-material-dark.css' :
-				'prism-themes/themes/prism-material-light.css'
-		);
-	},
 	computed: {
 		...mapState('machine/model', {
 			gCodesDirectory: state => state.directories.gCodes,
@@ -145,31 +126,11 @@ export default {
 			if (Path.startsWith(this.filename, this.macrosDirectory)) {
 				return true;
 			}
-
-			return this.detectedLanguage === 'gcode';
+			const matches = /\.(.*)$/.exec(this.filename.toLowerCase());
+			return matches && ['.g', '.gcode', '.gc', '.gco', '.nc', '.ngc', '.tap'].indexOf(matches[1]);
 		},
 		isMenu() {
 			return Path.startsWith(this.filename, this.menuDirectory);
-		},
-		detectedLanguage() {
-			let fileExtension = this.filename.toLowerCase().split('.').pop();
-
-			switch (fileExtension) {
-				case 'g':
-				case 'gcode':
-				case 'gc':
-				case 'gco':
-				case 'nc':
-				case 'ngc':
-				case 'tap':
-					return 'gcode';
-
-				case 'json':
-					return 'js';
-
-				default:
-					return fileExtension;
-			}
 		}
 	},
 	data() {
@@ -181,21 +142,14 @@ export default {
 	},
 	methods: {
 		...mapActions('machine', ['upload']),
-		async close(fileSaved) {
-
-			if (this.valueChanged && !fileSaved) {
-				if (await this.$refs.confirm.open('', this.$t('dialog.fileEdit.confirmClose'))) {
-					this.$emit('input', '');
-					this.$emit('update:shown', false);
-					this.$root.$emit('dialog-closing');
-				} else {
-					return;
-				}
-			} else {
-				this.$emit('input', '');
-				this.$emit('update:shown', false);
-				this.$root.$emit('dialog-closing')
+		close(fileSaved) {
+			if (this.valueChanged && !fileSaved && !confirm(this.$t('dialog.fileEdit.confirmClose'))) {
+				return;
 			}
+
+			this.$emit('input', '');
+			this.$emit('update:shown', false);
+			this.$root.$emit('dialog-closing')
 		},
 		async save() {
 			const content = new Blob([this.innerValue]);
@@ -221,7 +175,7 @@ export default {
 			this.innerValue = `${textStart}\t${textEnd}`;
 			e.target.value = this.innerValue;
 			e.target.selectionEnd = e.target.selectionStart = originalSelectionStart + 1;
-		},
+		}
 	},
 	watch: {
 		shown(to) {
