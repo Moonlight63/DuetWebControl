@@ -25,6 +25,11 @@ export default new Vue({
 		icons: {
 			iconfont: 'mdiSvg',
 		},
-		lang: { t: (key, ...params) => i18n.t(key, params) }
+		lang: { t: (key, ...params) => i18n.t(key, params) },
+		theme: {
+			options: {
+				customProperties: true
+			}
+		}
 	})
 })

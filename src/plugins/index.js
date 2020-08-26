@@ -89,5 +89,13 @@ export default Vue.observable([
 		)
 	}),
 	// Add your own plugins here during development...
+	new Plugin({
+		name: 'Pi Touchscreen',
+		author: 'Dalen Catt',
+		version,
+		loadModule: () => import(
+			/* webpackChunkName: "Visualizer" */
+			'./PiTouchScreen/Base.vue'
+		)
+	}),
 ])
-
