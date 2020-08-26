@@ -20,14 +20,21 @@ module.exports = {
 	},
 	chainWebpack: config => {
 		config.optimization.set('splitChunks', {
+			chunks: 'all',
 			cacheGroups: {
-				vendors: false,
-				common: false
+				default: false,
+				vendors: false
 			}
 		});
 		config.plugins.delete('prefetch');
 	},
 	transpileDependencies: [
 		'vuetify'
-	]
+	],
+	pwa: {
+		name: 'Duet Web Control 2',
+		themeColor: '#2196f3',
+		appleMobileWebAppCapable: 'yes',
+		appleMobileWebAppStatusBarStyle: 'black'
+	}
 }
