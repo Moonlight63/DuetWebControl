@@ -32,11 +32,11 @@ export default {
 							path: '',
 							component: Routes.Dashboard
 						},
-						{
-							path: 'gcode',
-							component: Routes.GcodeViewer,
-							condition: true,
-						}
+						// {
+						// 	path: 'gcode',
+						// 	component: Routes.GcodeViewer,
+						// 	condition: true,
+						// }
 					]
 				}
 			}
